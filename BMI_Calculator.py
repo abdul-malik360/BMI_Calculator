@@ -21,11 +21,11 @@ treadmill = PhotoImage(file = "treadmil.png")
 background = Label(box, image=treadmill,).place(x=50, y=50)
 
 # create variables for entry boxes
-bmi = StringVar
-ideal = StringVar
-w_ent = StringVar
-h_ent = StringVar
-a_ent = StringVar
+bmi = StringVar()
+ideal = StringVar()
+w_ent = StringVar()
+h_ent = StringVar()
+a_ent = StringVar()
 
 
 # add a heading to your programme and place it
@@ -39,12 +39,7 @@ input_box = LabelFrame(box, padx=50, pady=30, bg="light blue")
 # place the frame
 input_box.place(x=50, y=300)
 
-# create a list of options
-options = ["select", "Male", "Female"]
-# create a variable
-var = StringVar(box)
-# set variable to the list options
-var.set(options[0])
+
 # add labels to your frame, give it a background color and place them
 Label(input_box, text="Weight: ", bg="light blue").grid(row=1, column=1)
 Label(input_box, text="Height: ", bg="light blue").grid(row=2, column=1)
@@ -56,6 +51,22 @@ Label(input_box, text="Age: ", bg="light blue").grid(row=3,column=3)
 weight = Entry(input_box, ).grid(row=1, column=2)
 height = Entry(input_box).grid(row=2, column=2)
 age = Entry(input_box).grid(row=3, column=4)
+
+# create a list of options
+options = ["select", "Male", "Female"]
+# create a variable
+var = StringVar(box)
+# set variable to the list options
+var.set(options[0])
+
+# defining function of the options
+def choose(value):
+    var.set(value)
+    if value != "Select":
+        age.config(state='normal')
+    else:
+        age.config(state='readonly')
+
 # add an option menu to your frame
 opt = OptionMenu(input_box, var, *options)
 # give your menu a width and a background color
@@ -65,9 +76,41 @@ opt.grid(row=3,column=2)
 
 
 # defining the function of the calculating bmi button
+
 def calculate():
-    input_box.weight/(height/100)**2
-    return BMI
+
+    if var.get() == "Select":
+        raise ValueError
+    elif var.get() == "Male":
+        result = ((0.5 * float(weight.get())) / ((float(height.get()) / 100) ** 2)) + 11.5
+        result = round(result, 1)
+        ideal_bmi.config(state='normal')
+        ideal_bmi.insert(0, result)
+        ideal_bmi.config(state='readonly')
+        rbmi = float(weight.get()) / ((float(height.get()) / 100) ** 2)
+        answer_bmi.config(state='normal')
+        answer_bmi.insert(0, round(rbmi, 1))
+        answer_bmi.config(state='readonly')
+    elif var.get() == "Female":
+        result = ((0.5 * float(weight.get())) / ((float(height.get()) / 100) ** 2)) + (0.03 * float(age.get())) + 11
+        result = round(result, 1)
+        ideal_bmi.config(state='normal')
+        ideal_bmi.insert(0, result)
+        ideal_bmi.config(state='readonly')
+        result_bmi = float(weight.get()) / ((float(height.get()) / 100) ** 2)
+        answer_bmi.config(state='normal')
+        answer_bmi.insert(0, round(rbmi, 1))
+        answer_bmi.config(state='readonly')
+    if rbmi < 18.5:
+        size.config(text='Underweight')
+    elif 18.5 <= rbmi < 25:
+        size.config(text='Normal weight')
+    elif 25 <= rbmi < 30:
+        size.config(text='Overweight')
+    elif rbmi >= 30:
+        size.config(text='Obese')
+
+
 
 
 # create a button to calculate BMI, give it a color and place it
@@ -77,8 +120,13 @@ Button(box, text="Calculate your Ideal BMI", bg="light blue", command=calculate)
 Label(box, text="BMI: ", bg="sky blue").place(x=50, y=500)
 Label(box, text="Ideal BMI: ", bg= "sky blue").place(x=300, y=500)
 # result boxes
-BMI = Label(box, width=20).place(x=100, y=500)
-Label(box, width=20).place(x=390, y=500)
+answer_bmi = Label(box, textvariable=bmi, width=20).place(x=100, y=500)
+ideal_bmi = Label(box, width=20).place(x=390, y=500)
+
+
+Label(box, text="You are:", bg='sky blue').place(x=250, y=530)
+size = Label(box, width=20, bg='sky blue').place(x=200, y=560)
+
 
 
 # # defining function of the clear button
